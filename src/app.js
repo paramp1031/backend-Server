@@ -23,6 +23,8 @@ import userRouter from "./routes/user.router.js";
 //router declaration
 app.use("/api/v1/users", userRouter);
 
+// http://localhost:8001/api/v1/users/register
+
 /*
 // log setup to debug 
 
