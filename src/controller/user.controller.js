@@ -60,7 +60,7 @@ const registerUser = asyncHandler(async (req, res) => {
     Array.isArray(req.files.coverImage) &&
     req.files.coverImage.length > 0
   ) {
-    coverlocalpath = req.files.coverImage[0].path;
+    coverlocalpath = req.files.coverImage[0].path; 
   }
 
   if (!avatarlocalpath) {
@@ -104,9 +104,13 @@ const loginUser = asyncHandler(async (req, res) => {
   //send cookies
 
   const { email, password, username } = req.body;
+  console.log("password in loging : ",password)
   if (!(username || email)) {
     throw new ApiError(400, " username or email is required");
   }
+
+  // console.log("email : ", email, "password : ", password, "username : ", username);
+
   const user = await User.findOne({
     $or: [{ username }, { email }],
   });
@@ -115,7 +119,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "user does not exist");
   }
   const isPasswordvalid = await user.isPasswordCorrect(password);
-  if (isPasswordvalid) {
+  if (!isPasswordvalid) {
     throw new ApiError(401, "Invalid user credentials ");
   }
 
@@ -134,9 +138,9 @@ const loginUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accesstoken", accessToken, options)
+    .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
-    .json(
+    .json( new ApiResponse(
       200,
       {
         user: loggedInUser,
@@ -144,9 +148,9 @@ const loginUser = asyncHandler(async (req, res) => {
         refreshToken,
       },
       "User logged in successfuly "
-    );
+    ));
 });
-
+/*
 const logOutUser = asyncHandler(async (req, res) => {
   //User.findById
   await User.findByIdAndUpdate(
@@ -171,6 +175,35 @@ const logOutUser = asyncHandler(async (req, res) => {
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200), {}, "User logged out successfuly");
 });
+*/
+
+const logOutUser = asyncHandler(async(req, res) => {
+
+  // console.log(req.user._id);
+
+  await User.findByIdAndUpdate(
+      req.user._id,
+      {
+          $unset: {
+              refreshToken: 1 // this removes the field from document
+          }
+      },
+      {
+          new: true
+      }
+  )
+
+  const options = {
+      httpOnly: true,
+      secure: true
+  }
+
+  return res
+  .status(200)
+  .clearCookie("accessToken", options)
+  .clearCookie("refreshToken", options)
+  .json(new ApiResponse(200, {}, "User logged Out Successfully "))
+})
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken =
@@ -222,14 +255,14 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
-
-  const user = await User.findById(req.user?._id);
+  console.log(req.params.userid);
+  const user = await User.findById(req.params.userid);
+  console.log("user in changeCurr : " , user);
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
-
   if (!isPasswordCorrect) {
     throw new ApiError(400, "Invalid old password");
   }
-
+ 
   user.password = newPassword;
   await user.save({ validateBeforeSave: false });
 
