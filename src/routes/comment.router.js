@@ -4,9 +4,9 @@ import {
   deleteComment,
   getVideoComments,
   updateComment,
-} from "../controllers/comment.controller.js";
+} from "../controller/comment.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { upload } from "../middlewares/multer.middleware.js";
+import { upload } from "../middlewares/multer.js";
 
 const router = Router();
 

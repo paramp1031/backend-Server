@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { upload } from "../middlewares/multer.middleware.js";
+import { upload } from "../middlewares/multer.js";
 import {
   createPlaylist,
   updatePlaylist,
@@ -9,7 +9,7 @@ import {
   removeVideoFromPlaylist,
   getPlaylistById,
   getUserPlaylists,
-} from "../controllers/playlist.controller.js";
+} from "../controller/playlist.controller.js";
 
 const router = Router();
 

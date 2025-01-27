@@ -5,8 +5,8 @@ import {
   deleteTweet,
   updateTweet,
   getUserTweets,
-} from "../controllers/tweet.controller.js";
-import { upload } from "../middlewares/multer.middleware.js";
+} from "../controller/tweet.controller.js";
+import { upload } from "../middlewares/multer.js";
 
 const router = Router();
 
