@@ -6,6 +6,10 @@ dotenv.config({
   path: "/env", // if giving prob try "./.env"
 });
 
+app.get("/", (req, res) => {
+  res.send("Paramhans pal"); // Replace "Your Name" with your actual name
+});
+
 connectDB()
   .then(() => {
     app.listen(process.env.PORT || 8000, () => {
